@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Save, ExternalLink } from 'lucide-react';
+import { Eye, EyeOff, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ApiKeyModalProps {
@@ -23,7 +22,7 @@ const ApiKeyModal = ({ isOpen, onClose, apiKey, onSave }: ApiKeyModalProps) => {
     onSave(tempApiKey);
     toast({
       title: "API Key Saved",
-      description: "Your OpenRouter API key has been saved successfully. You can now start chatting!",
+      description: "Your API key has been saved successfully.",
     });
     onClose();
   };
@@ -38,22 +37,22 @@ const ApiKeyModal = ({ isOpen, onClose, apiKey, onSave }: ApiKeyModalProps) => {
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-color)]">
         <DialogHeader>
-          <DialogTitle>OpenRouter API Key</DialogTitle>
+          <DialogTitle>API Key</DialogTitle>
           <DialogDescription className="text-gray-400">
-            Enter your OpenRouter API key to use a wide variety of models. Your API key is stored locally.
+            Enter your API key if required. Your key is stored locally in your browser.
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="apiKey">OpenRouter API Key</Label>
+            <Label htmlFor="apiKey">API Key</Label>
             <div className="relative">
               <Input
                 id="apiKey"
                 type={showKey ? 'text' : 'password'}
                 value={tempApiKey}
                 onChange={(e) => setTempApiKey(e.target.value)}
-                placeholder="sk-or-..."
+                placeholder="Enter your key..."
                 className="pr-10 bg-[var(--input-bg)] border-[var(--border-color)]"
               />
               <Button
@@ -70,16 +69,6 @@ const ApiKeyModal = ({ isOpen, onClose, apiKey, onSave }: ApiKeyModalProps) => {
                 )}
               </Button>
             </div>
-          </div>
-
-          <div className="bg-blue-900/20 p-4 rounded-lg border border-blue-500/30">
-            <h4 className="font-medium text-blue-300 mb-2">How to get your OpenRouter API key:</h4>
-            <ol className="text-sm text-blue-400 space-y-1 list-decimal list-inside">
-              <li>Go to <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="underline inline-flex items-center">openrouter.ai/keys <ExternalLink className="w-3 h-3 ml-1" /></a></li>
-              <li>Sign in to your OpenRouter account</li>
-              <li>Click "Create Key"</li>
-              <li>Copy the key and paste it here</li>
-            </ol>
           </div>
         </div>
 

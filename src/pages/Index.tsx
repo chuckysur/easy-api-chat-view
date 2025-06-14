@@ -25,7 +25,12 @@ const Index = () => {
     
     const savedHistory = localStorage.getItem('chatHistory');
     if (savedHistory) {
-      setConversation(JSON.parse(savedHistory));
+      try {
+        setConversation(JSON.parse(savedHistory) as Message[]);
+      } catch (e) {
+        console.error("Failed to parse chat history, starting fresh.", e);
+        setConversation([{ id: 'init-error', role: 'system', content: "👋 Welcome to AI Chat Interface! Select a model and start chatting." }]);
+      }
     } else {
       setConversation([{ id: 'init', role: 'system', content: "👋 Welcome to AI Chat Interface! Select a model and start chatting." }]);
     }
@@ -67,7 +72,6 @@ const Index = () => {
         <ChatMain 
           conversation={conversation}
           onSendMessage={handleSendMessage}
-          apiKey={apiKey}
           model={currentModel}
         />
       </div>

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -11,11 +10,10 @@ interface Message {
 interface ChatMainProps {
   conversation: Message[];
   onSendMessage: (message: Message) => void;
-  apiKey: string;
   model: string;
 }
 
-const ChatMain = ({ conversation, onSendMessage, apiKey, model }: ChatMainProps) => {
+const ChatMain = ({ conversation, onSendMessage, model }: ChatMainProps) => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -33,42 +31,38 @@ const ChatMain = ({ conversation, onSendMessage, apiKey, model }: ChatMainProps)
     }
   }, [input]);
   
-  const callOpenRouter = async (messages: { role: string; content: string }[], model: string): Promise<string> => {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': `${window.location.origin}`,
-        'X-Title': 'Lovable AI Chat',
-      },
-      body: JSON.stringify({
-        model: model,
-        messages: messages,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || `API Error: ${response.statusText}`);
+  const callPuterAI = async (latestMessage: string, history: { role: string; content: string }[], model: string): Promise<string> => {
+    const puter = (window as any).puter;
+    if (!puter || !puter.ai) {
+      throw new Error("Puter.js script is not loaded correctly. Please ensure you are logged into Puter.");
     }
-
-    const data = await response.json();
-    return data.choices[0]?.message?.content || 'No response received';
+  
+    const response = await puter.ai.chat(latestMessage, {
+      model: model,
+      messages: history,
+    });
+  
+    console.log("Puter.ai response:", response);
+  
+    if (response?.choices?.[0]?.message?.content) {
+      return response.choices[0].message.content;
+    }
+    if (response?.content) {
+        return response.content;
+    }
+    if (response?.text) {
+      return response.text;
+    }
+    if (typeof response === 'string') {
+        return response;
+    }
+  
+    throw new Error("Unsupported response format from Puter.ai. Check console for details.");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
-
-    if (!apiKey) {
-      toast({
-        title: "API Key Required",
-        description: "Please set your OpenRouter API key in the header to start chatting.",
-        variant: "destructive"
-      });
-      return;
-    }
 
     const userMessage = { id: Date.now().toString(), role: 'user' as const, content: input.trim() };
     onSendMessage(userMessage);
@@ -79,10 +73,8 @@ const ChatMain = ({ conversation, onSendMessage, apiKey, model }: ChatMainProps)
     onSendMessage(botMessagePlaceholder);
 
     try {
-      const apiMessages = conversation.map(({ role, content }) => ({ role, content }));
-      apiMessages.push({ role: 'user', content: userMessage.content });
-
-      const response = await callOpenRouter(apiMessages, model);
+      const history = conversation.map(({ role, content }) => ({ role, content }));
+      const response = await callPuterAI(userMessage.content, history, model);
       
       const finalBotMessage: Message = { id: botMessagePlaceholder.id, role: 'assistant', content: response };
       onSendMessage(finalBotMessage);
