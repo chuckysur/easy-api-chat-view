@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import ChatMessage from './ChatMessage';
 
 interface Message {
   id: string;
@@ -72,7 +73,7 @@ const ChatMain = ({ conversation, onSendMessage, model }: ChatMainProps) => {
     setInput('');
     setIsLoading(true);
 
-    const botMessagePlaceholder: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: '...' };
+    const botMessagePlaceholder: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: 'Thinking...' };
     onSendMessage(botMessagePlaceholder);
 
     try {
@@ -96,24 +97,8 @@ const ChatMain = ({ conversation, onSendMessage, model }: ChatMainProps) => {
     <div className="flex-1 flex flex-col" style={{ backgroundColor: 'var(--bg-color)' }}>
       <div id="messages" className="messages">
         {conversation.map((message) => (
-          <div key={message.id} className={`message ${message.role}`}>
-            <div className="content">
-              {message.content}
-            </div>
-          </div>
+          <ChatMessage key={message.id} message={message} />
         ))}
-        {isLoading && conversation[conversation.length - 1]?.role === 'assistant' && (
-           <div className="message assistant loading">
-             <div className="content">
-               Thinking
-               <div className="dots">
-                 <div className="dot"></div>
-                 <div className="dot"></div>
-                 <div className="dot"></div>
-               </div>
-             </div>
-           </div>
-        )}
         <div ref={messagesEndRef} />
       </div>
 

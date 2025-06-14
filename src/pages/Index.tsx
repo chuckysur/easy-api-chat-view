@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import ChatMain from '@/components/ChatMain';
 import ApiKeyModal from '@/components/ApiKeyModal';
@@ -64,7 +63,7 @@ const Index = () => {
   };
   
   const handleClearChat = () => {
-    const clearedConversation = [{ id: 'cleared', role: 'system', content: "Chat cleared. Start a new conversation!" }];
+    const clearedConversation = [{ id: 'cleared', role: 'system' as const, content: "Chat cleared. Start a new conversation!" }];
     setConversation(clearedConversation);
     localStorage.setItem('chatHistory', JSON.stringify(clearedConversation));
   };

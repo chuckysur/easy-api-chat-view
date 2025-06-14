@@ -1,4 +1,6 @@
 
+@import 'highlight.js/styles/atom-one-dark.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -264,15 +266,18 @@ button:disabled {
   box-shadow: none;
 }
 
+.code-block-wrapper {
+  position: relative;
+  margin: 15px 0;
+}
+
 pre {
   background: var(--code-bg);
   padding: 15px;
   border-radius: 8px;
   overflow-x: auto;
-  margin: 15px 0;
   border: 1px solid var(--border-color);
   border-left: 4px solid var(--primary-color);
-  position: relative;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
@@ -352,23 +357,30 @@ code {
   51%, 100% { opacity: 0; }
 }
 
-.copy-btn {
+.code-block-wrapper .copy-btn {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  padding: 3px 8px;
-  background: #4361ee;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  top: 8px;
+  right: 8px;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.3s;
+  opacity: 0.2;
+  transition: opacity 0.2s, background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: auto;
 }
 
-pre:hover .copy-btn {
+.code-block-wrapper:hover .copy-btn {
   opacity: 1;
+}
+
+.code-block-wrapper .copy-btn:hover {
+    background-color: var(--primary-color);
 }
 
 /* Custom scrollbar */
