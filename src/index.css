@@ -1,103 +1,431 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+:root {
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --header-bg: #252525;
+  --text-color: #e0e0e0;
+  --input-bg: #2d2d2d;
+  --border-color: #333;
+  --primary-color: #7289da;
+  --secondary-color: #3a3f4b;
+  --user-msg-bg: #4d5baf;
+  --bot-msg-bg: #2d2d2d;
+  --code-bg: #1a1a1a;
+  --success-color: #28a745;
+  --error-color: #dc3545;
+}
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+* {
+  box-sizing: border-box;
+}
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  text-align: left;
+}
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+.chat-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  min-height: 600px;
+}
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+.header {
+  padding: 20px;
+  background: var(--header-bg);
+  color: var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+.header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  background: linear-gradient(45deg, #7289da, #9b59b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+.header-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+.model-container {
+  padding: 10px 20px;
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+}
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+.model-search {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 14px;
+}
 
-    --radius: 0.5rem;
+.model-search:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.2);
+}
 
-    --sidebar-background: 0 0% 98%;
+.model-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+.category-btn {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: var(--secondary-color);
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
 
-    --sidebar-primary: 240 5.9% 10%;
+.category-btn:hover {
+  background: var(--primary-color);
+  transform: translateY(-1px);
+}
 
-    --sidebar-primary-foreground: 0 0% 98%;
+.category-btn.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(114, 137, 218, 0.3);
+}
 
-    --sidebar-accent: 240 4.8% 95.9%;
+.model-select-container {
+  margin-top: 5px;
+}
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 14px;
+  cursor: pointer;
+}
 
-    --sidebar-border: 220 13% 91%;
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.2);
+}
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--bg-color) 0%, #1a1a1a 100%);
+}
+
+.message {
+  margin-bottom: 20px;
+  display: flex;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.message.user {
+  justify-content: flex-end;
+}
+
+.message.bot, .message.assistant {
+  justify-content: flex-start;
+}
+
+.message .content {
+  padding: 15px 20px;
+  border-radius: 18px;
+  max-width: 75%;
+  word-wrap: break-word;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  position: relative;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.message.user .content {
+  background: linear-gradient(135deg, var(--user-msg-bg), #5a6fd8);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message.bot .content, .message.assistant .content {
+  background: var(--bot-msg-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-bottom-left-radius: 4px;
+}
+
+.message.system .content {
+  background: rgba(114, 137, 218, 0.1);
+  border: 1px dashed var(--primary-color);
+  color: var(--primary-color);
+  text-align: center;
+  margin: 10px auto;
+  max-width: 90%;
+  border-radius: 8px;
+}
+
+.input-area {
+  display: flex;
+  padding: 20px;
+  background-color: var(--card-bg);
+  border-top: 1px solid var(--border-color);
+  gap: 12px;
+}
+
+textarea {
+  flex: 1;
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  resize: none;
+  min-height: 50px;
+  max-height: 120px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.2);
+}
+
+button {
+  padding: 0 24px;
+  background: linear-gradient(135deg, var(--primary-color), #5d73c7);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  min-height: 50px;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(114, 137, 218, 0.3);
+}
+
+button:disabled {
+  background: var(--secondary-color);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 15px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 15px 0;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--primary-color);
+  position: relative;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  color: #e0e0e0;
+  font-size: 13px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  color: var(--primary-color);
+}
+
+.dots {
+  display: flex;
+  margin-left: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  margin: 0 3px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+.status-indicator {
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-indicator.connected {
+  background: rgba(40, 167, 69, 0.2);
+  color: var(--success-color);
+}
+
+.status-indicator.error {
+  background: rgba(220, 53, 69, 0.2);
+  color: var(--error-color);
+}
+
+.model-info {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background-color: var(--primary-color);
+  animation: blink 1s infinite;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.copy-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 3px 8px;
+  background: #4361ee;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+pre:hover .copy-btn {
+  opacity: 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
   }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  
+  .chat-container {
+    height: 95vh;
+  }
+  
+  .header {
+    padding: 15px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .model-categories {
+    justify-content: center;
+  }
+  
+  .message .content {
+    max-width: 90%;
+  }
+  
+  .input-area {
+    padding: 15px;
+    flex-direction: column;
+  }
+  
+  button {
+    min-height: 44px;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
+pre code {
+  background: none;
+  padding: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
