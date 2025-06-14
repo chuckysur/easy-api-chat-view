@@ -26,7 +26,16 @@ const Index = () => {
     const savedHistory = localStorage.getItem('chatHistory');
     if (savedHistory) {
       try {
-        setConversation(JSON.parse(savedHistory) as Message[]);
+        const parsedHistory = JSON.parse(savedHistory);
+        if (Array.isArray(parsedHistory)) {
+          // Type guard to validate message structure, fixing the build error.
+          const validHistory = parsedHistory.filter((m: any): m is Message => 
+            m && typeof m.id === 'string' &&
+            typeof m.content === 'string' &&
+            ['user', 'assistant', 'system'].includes(m.role)
+          );
+          setConversation(validHistory);
+        }
       } catch (e) {
         console.error("Failed to parse chat history, starting fresh.", e);
         setConversation([{ id: 'init-error', role: 'system', content: "👋 Welcome to AI Chat Interface! Select a model and start chatting." }]);

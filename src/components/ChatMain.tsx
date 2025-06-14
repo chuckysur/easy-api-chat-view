@@ -44,6 +44,9 @@ const ChatMain = ({ conversation, onSendMessage, model }: ChatMainProps) => {
   
     console.log("Puter.ai response:", response);
   
+    if (response?.message?.content) {
+      return response.message.content;
+    }
     if (response?.choices?.[0]?.message?.content) {
       return response.choices[0].message.content;
     }
