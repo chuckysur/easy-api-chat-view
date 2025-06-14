@@ -42,6 +42,44 @@ const ChatMain = ({ conversation, onSendMessage, onUpdateTitle, apiKey }: ChatMa
     }
   }, [input]);
 
+  const callOpenAI = async (messages: { role: string; content: string }[]): Promise<string> => {
+    console.log('Making API call to OpenAI with messages:', messages);
+    
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: messages,
+        temperature: 0.7,
+        max_tokens: 1000,
+      }),
+    });
+
+    console.log('OpenAI API response status:', response.status);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('OpenAI API error:', errorData);
+      
+      if (response.status === 401) {
+        throw new Error('Invalid API key. Please check your OpenAI API key.');
+      } else if (response.status === 429) {
+        throw new Error('Rate limit exceeded. Please try again later.');
+      } else {
+        throw new Error(errorData.error?.message || 'Failed to get response from OpenAI');
+      }
+    }
+
+    const data = await response.json();
+    console.log('OpenAI API response data:', data);
+    
+    return data.choices[0]?.message?.content || 'No response received';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -49,7 +87,7 @@ const ChatMain = ({ conversation, onSendMessage, onUpdateTitle, apiKey }: ChatMa
     if (!apiKey) {
       toast({
         title: "API Key Required",
-        description: "Please set your API key in the sidebar to start chatting.",
+        description: "Please set your OpenAI API key in the sidebar to start chatting.",
         variant: "destructive"
       });
       return;
@@ -69,30 +107,44 @@ const ChatMain = ({ conversation, onSendMessage, onUpdateTitle, apiKey }: ChatMa
     }
 
     try {
-      // Simulate AI response (replace with actual API call)
-      const response = await simulateAIResponse(userMessage, apiKey);
+      // Prepare messages for API call
+      const conversationMessages = conversation?.messages || [];
+      const apiMessages = [
+        ...conversationMessages.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
+        { role: 'user', content: userMessage }
+      ];
+
+      console.log('Sending messages to OpenAI:', apiMessages);
+      
+      // Make actual API call to OpenAI
+      const response = await callOpenAI(apiMessages);
       onSendMessage({ role: 'assistant', content: response });
+      
+      toast({
+        title: "Success",
+        description: "Response received from ChatGPT!",
+      });
+      
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error calling OpenAI:', error);
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      
       toast({
         title: "Error",
-        description: "Failed to get response. Please check your API key and try again.",
+        description: errorMessage,
         variant: "destructive"
       });
+      
       onSendMessage({ 
         role: 'assistant', 
-        content: "I'm sorry, I encountered an error while processing your request. Please check your API key and try again." 
+        content: `Error: ${errorMessage}. Please check your API key and try again.` 
       });
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const simulateAIResponse = async (message: string, apiKey: string): Promise<string> => {
-    // This is a placeholder simulation. Replace with actual API call to your preferred service
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-    
-    return `This is a simulated response to: "${message}". To use a real AI service, implement the API call using your provided API key. You can integrate with OpenAI, Anthropic, or other AI services by replacing this simulation with actual API calls.`;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
